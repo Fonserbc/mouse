@@ -10,13 +10,13 @@ export class MultiplayerClient {
   localPlayerDisplayString = ref("");
   localPlayer : Player = {id: "", skin: -1, level: ''};
   playerList: Player[] = [];
-  serverTimeOffset : number = 0;
+  serverTimeOffset: number = 0;
 
   constructor(skin : number, requestedLevel : string) {
     const logs = useLogStore()
     console.log('setting up multiplayer client...')
     
-    this.connection = socket.io(window.location.hostname+`:3000`, { query: { skin, requestedLevel } });
+    this.connection = socket.io(window.location.hostname, { query: { skin, requestedLevel } });
     this.connection.on('connect', () => {
       console.log('connected to multiplayer server')
     })
@@ -26,7 +26,7 @@ export class MultiplayerClient {
     })
 
     this.connection.on('playerList', (playerList) => {
-      this.playersOnline.value = `ASSOCIATES: ${playerList.length-1}`;
+      this.playersOnline.value = `ASSOCIATES: ${playerList.length - 1}`;
       this.playerList = playerList;
     })
 
@@ -54,18 +54,18 @@ export class MultiplayerClient {
     })
   }
 
-  processNewRemotePlayer(player : Player) {
+  processNewRemotePlayer(player: Player) {
     this.onRemotePlayerConnectedCallbacks.forEach(cb => cb(player));
   }
 
-  private onRemotePlayerConnectedCallbacks : ((player : Player) => void)[] = [];
+  private onRemotePlayerConnectedCallbacks: ((player: Player) => void)[] = [];
 
-  onPlayerConnected(cb : (player : Player) => void) {
+  onPlayerConnected(cb: (player: Player) => void) {
     this.onRemotePlayerConnectedCallbacks.push(cb);
   }
 
-  private onRemotePlayerDisconnectedCallbacks : ((id: string) => void)[] = [];
-  onRemotePlayerDisconnected(cb : (id: string) => void) {
+  private onRemotePlayerDisconnectedCallbacks: ((id: string) => void)[] = [];
+  onRemotePlayerDisconnected(cb: (id: string) => void) {
     this.onRemotePlayerDisconnectedCallbacks.push(cb);
   }
 
@@ -74,7 +74,7 @@ export class MultiplayerClient {
     this.connection.emit('playerSentFrameData', data, Date.now());
   }
 
-  private onRemotePlayerFrameDataCallbacks : ((id: string, data: any, sentTime: number) => void)[] = [];
+  private onRemotePlayerFrameDataCallbacks: ((id: string, data: any, sentTime: number) => void)[] = [];
   onRemotePlayerFrameData(cb: (id: string, data: any, sentTime: number) => void) {
     this.onRemotePlayerFrameDataCallbacks.push(cb);
   }
@@ -88,7 +88,7 @@ export class MultiplayerClient {
     return Date.now() + this.serverTimeOffset;
   }
 
-  private computeServerTimeOffset(serverMessageTime : number) {
+  private computeServerTimeOffset(serverMessageTime: number) {
     let clientTimeMs = Date.now();
     let clientTime = new Date(clientTimeMs);
     let serverTime = new Date(serverMessageTime);
